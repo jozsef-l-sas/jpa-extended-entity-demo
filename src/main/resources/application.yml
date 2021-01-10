@@ -1,0 +1,13 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/test_db"
+    username: postgres
+    password: password
+
+
+  liquibase:
+    change-log: classpath:/db/changelog/changelog-master.xml

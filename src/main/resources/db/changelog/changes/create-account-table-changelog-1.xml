@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet author="jozsef" id="1">
+        <createTable tableName="account">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="account_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMPTZ"
+                    defaultValueComputed="NOW()">
+            </column>
+            <column name="updated_at" type="TIMESTAMPTZ"
+                    defaultValueComputed="NOW()">
+            </column>
+            <column name="account_type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="account"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="jozsef" id="2">
+        <createTable tableName="account_currency">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="balance" type="INT" defaultValueComputed="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="VARCHAR(255)"/>
+            <column name="account_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMPTZ"
+                    defaultValueComputed="NOW()">
+            </column>
+            <column name="updated_at" type="TIMESTAMPTZ"
+                    defaultValueComputed="NOW()">
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="accounts_currency"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="3" author="jozsef">
+        <sql>
+            DROP TRIGGER IF EXISTS set_timestamp ON account;
+            CREATE TRIGGER set_timestamp
+            BEFORE UPDATE ON account
+            FOR EACH ROW
+            EXECUTE PROCEDURE trigger_set_timestamp()
+        </sql>
+        <rollback>
+            DROP TRIGGER set_timestamp ON account;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="4" author="jozsef">
+        <sql>
+            DROP TRIGGER IF EXISTS set_timestamp ON account_currency;
+            CREATE TRIGGER set_timestamp
+            BEFORE UPDATE ON account_currency
+            FOR EACH ROW
+            EXECUTE PROCEDURE trigger_set_timestamp()
+        </sql>
+        <rollback>
+            DROP TRIGGER set_timestamp ON account_currency;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="5" author="jozsef">
+        <addForeignKeyConstraint baseColumnNames="account_id"
+                                 baseTableName="account_currency"
+                                 constraintName="fk_account_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="account"/>
+    </changeSet>
+
+</databaseChangeLog>
