@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ErbApplication {
+public class JpaExtendedEntityDemoApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ErbApplication.class, args);
+		SpringApplication.run(JpaExtendedEntityDemoApplication.class, args);
 	}
 
 }

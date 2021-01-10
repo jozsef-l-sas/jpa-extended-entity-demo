@@ -1,7 +1,7 @@
 package com.jozsef.erb.controller;
 
-import com.jozsef.erb.entity.Account;
-import com.jozsef.erb.entity.SavingsAccount;
+import com.jozsef.erb.dto.AccountDTO;
+import com.jozsef.erb.dto.SavingsAccountDTO;
 import com.jozsef.erb.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,13 +19,14 @@ public class AccountController {
     private AccountService accountService;
 
     @GetMapping
-    public ResponseEntity<List<Account>> findAllAccounts() {
-        return new ResponseEntity<>(this.accountService.findAllAccounts(), HttpStatus.OK);
+    public ResponseEntity<List<AccountDTO>> findAllAccounts() {
+        List<AccountDTO> accounts = this.accountService.findAllAccounts();
+        return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 
     @GetMapping("/{name}")
-    public ResponseEntity<Account> findByName(@PathVariable String name) {
-        Account account = this.accountService.findByName(name);
+    public ResponseEntity<AccountDTO> findByName(@PathVariable String name) {
+        AccountDTO account = this.accountService.findByName(name);
         if (account != null) {
             return new ResponseEntity<>(account, HttpStatus.OK);
         } else {
@@ -34,11 +35,8 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<Account> createAccount(@Valid @RequestBody Account account) {
-        if (account.getAccountCurrency() != null) {
-            account.getAccountCurrency().setAccount(account);
-        }
-        Account createdAccount = this.accountService.createAccount(account);
+    public ResponseEntity<AccountDTO> createAccount(@Valid @RequestBody AccountDTO account) {
+        AccountDTO createdAccount = this.accountService.createAccount(account);
         if (createdAccount != null) {
             return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
         } else {
@@ -47,19 +45,13 @@ public class AccountController {
     }
 
     @GetMapping("/savings")
-    public ResponseEntity<List<SavingsAccount>> findAllSavingsAccounts() {
+    public ResponseEntity<List<SavingsAccountDTO>> findAllSavingsAccounts() {
         return new ResponseEntity<>(this.accountService.findAllSavingAccounts(), HttpStatus.OK);
     }
 
     @PostMapping("/savings")
-    public ResponseEntity<SavingsAccount> createAccount(@Valid @RequestBody SavingsAccount account) {
-        if (account.getAccountCurrency() != null) {
-            account.getAccountCurrency().setAccount(account);
-        }
-        if (account.getSavingsAccountData() != null) {
-            account.getSavingsAccountData().setAccount(account);
-        }
-        SavingsAccount createdAccount = this.accountService.createSavingsAccount(account);
+    public ResponseEntity<SavingsAccountDTO> createAccount(@Valid @RequestBody SavingsAccountDTO account) {
+        SavingsAccountDTO createdAccount = this.accountService.createSavingsAccount(account);
         if (createdAccount != null) {
             return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
         } else {
